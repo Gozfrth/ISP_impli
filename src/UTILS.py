@@ -1,5 +1,6 @@
 import plotly.express as px
 import streamlit as st
+import numpy as np
 
 def display_interactive_plot(image_data):
     fig = px.imshow(image_data)
@@ -10,3 +11,6 @@ def display_interactive_plot(image_data):
     )
     
     st.plotly_chart(fig)
+
+def b16_to_b8(image_data):
+    return (image_data / 4095 * 255).astype(np.uint8)

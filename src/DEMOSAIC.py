@@ -5,22 +5,6 @@ from scipy.ndimage import convolve
 
 RAW_FILE_PATH = "TestInput_Assignment_1/1920x1280x12bitsxGRBG_2850K_2000Lux.raw"
 
-def load_raw_image():
-    try:
-        with open(RAW_FILE_PATH, 'rb') as f:
-            raw_data = f.read()
-
-        width, height = 1920, 1280 
-
-        raw_values = np.frombuffer(raw_data, dtype=np.uint16).reshape((height, width))
-
-        effective_values = raw_values << 4
-
-        return effective_values
-
-    except Exception as e:
-        print("Error reading file:", e)
-
 def Bayer_demosaicing_bilinear(CFA):
     """
     REFERENCED THE FOLLOWING A LOT: 
@@ -55,16 +39,32 @@ def Bayer_demosaicing_bilinear(CFA):
 
     return np.stack([R, G, B], axis=-1)
 
-def load_raw_image_rgb():
+def load_raw_image(FILE):
     try:
-        with open(RAW_FILE_PATH, 'rb') as f:
+        with open("TestInput_Assignment_1/" + FILE, 'rb') as f:
             raw_data = f.read()
 
         width, height = 1920, 1280 
 
         raw_values = np.frombuffer(raw_data, dtype=np.uint16).reshape((height, width))
 
-        effective_values = raw_values << 4
+        effective_values = raw_values
+
+        return effective_values
+
+    except Exception as e:
+        print("Error reading file:", e)
+    
+def load_raw_image_rgb(FILE):
+    try:
+        with open("TestInput_Assignment_1/" + FILE, 'rb') as f:
+            raw_data = f.read()
+
+        width, height = 1920, 1280 
+
+        raw_values = np.frombuffer(raw_data, dtype=np.uint16).reshape((height, width))
+
+        effective_values = raw_values
 
         # GRBG 2x2 MATRIX VALS
         g1 = effective_values[0::2, 0::2]
@@ -73,16 +73,19 @@ def load_raw_image_rgb():
         g2 = effective_values[1::2, 1::2]
 
         rgb_img = np.zeros((height, width, 3), dtype=np.uint16)
+
         rgb_img[0::2, 0::2, 1] = g1
         rgb_img[0::2, 1::2, 0] = r
         rgb_img[1::2, 0::2, 2] = b
         rgb_img[1::2, 1::2, 1] = g2
 
+        rgb_img_display = np.zeros((height, width, 3), dtype=np.uint16)
+
         rgb_img_display = (rgb_img / 4095 * 255).astype(np.uint8)
 
         print("Raw data loaded successfully")
 
-        return (rgb_img, rgb_img_display)
+        return rgb_img_display
 
     except Exception as e:
         print("Error reading file:", e)
