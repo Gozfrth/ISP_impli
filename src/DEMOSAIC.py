@@ -1,15 +1,61 @@
 import numpy as np
 import math 
-import matplotlib.pyplot as plt
-import plotly.express as px
 import streamlit as st
+from scipy.ndimage import convolve
 
 RAW_FILE_PATH = "TestInput_Assignment_1/1920x1280x12bitsxGRBG_2850K_2000Lux.raw"
 
-scale = 1.0
-window_name = "Zoomable Image"
-
 def load_raw_image():
+    try:
+        with open(RAW_FILE_PATH, 'rb') as f:
+            raw_data = f.read()
+
+        width, height = 1920, 1280 
+
+        raw_values = np.frombuffer(raw_data, dtype=np.uint16).reshape((height, width))
+
+        effective_values = raw_values << 4
+
+        return effective_values
+
+    except Exception as e:
+        print("Error reading file:", e)
+
+def Bayer_demosaicing_bilinear(CFA):
+    """
+    REFERENCED THE FOLLOWING A LOT: 
+    https://github.com/colour-science/colour-demosaicing/blob/develop/colour_demosaicing/bayer/demosaicing/bilinear.py
+    """
+    height, width = CFA.shape
+
+    # MASKS
+
+    R_mask = np.zeros((height, width))
+    G_mask = np.zeros((height, width))
+    B_mask = np.zeros((height, width))
+
+    R_mask[0::2, 1::2] = 1
+    G_mask[0::2, 0::2] = 1
+    G_mask[1::2, 1::2] = 1 
+    B_mask[1::2, 0::2] = 1 
+
+    # Kernels
+    H_G = np.array([[0, 1, 0],
+                    [1, 4, 1],
+                    [0, 1, 0]]) / 4
+
+    H_RB = np.array([[1, 2, 1],
+                     [2, 4, 2],
+                     [1, 2, 1]]) / 4
+
+    # {‘reflect’, ‘constant’, ‘nearest’, ‘mirror’, ‘wrap’} modes
+    R = convolve(CFA * R_mask, H_RB, mode='reflect')
+    G = convolve(CFA * G_mask, H_G, mode='reflect')
+    B = convolve(CFA * B_mask, H_RB, mode='reflect')
+
+    return np.stack([R, G, B], axis=-1)
+
+def load_raw_image_rgb():
     try:
         with open(RAW_FILE_PATH, 'rb') as f:
             raw_data = f.read()
@@ -40,19 +86,6 @@ def load_raw_image():
 
     except Exception as e:
         print("Error reading file:", e)
-
-def display_interactive_plot(image_data):
-    fig = px.imshow(image_data)
-    
-    fig.update_layout(
-        width=1920,  # Adjust width as needed
-        height=1280  # Adjust height as needed
-    )
-    
-    st.plotly_chart(fig)
-
-
-
 
 ### THIS DOESNT WORK NOW THAT rgb_img_display is defined in the load_raw_image function
 # show_image_with_zoom(image_data=rgb_img_display)
