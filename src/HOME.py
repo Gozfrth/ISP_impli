@@ -7,14 +7,14 @@
 # WHAT PATAMETERS CAN BE CHANGED FOR DEMOSAIC IN THE UI?
 
 import streamlit as st
-from DEMOSAIC import load_raw_image, load_raw_image_rgb, Bayer_demosaicing_bilinear
 from UTILS import display_interactive_plot, b16_to_b8
+from DEMOSAIC import load_raw_image, load_raw_image_rgb, Bayer_demosaicing_bilinear
+from DENOISE import apply_gaussian_filter_whole
 from GAMMA_CORRECTION import gamma_correct_and_reduce_bit_depth
 import numpy as np
     
 def view_raw_image(FILE):
-    st.markdown("""### RAW IMAGE""")
-    
+    st.markdown("""### RAW IMAGE""")    
     raw_image_data_display = load_raw_image_rgb(FILE)
     display_interactive_plot(raw_image_data_display)
 
@@ -29,6 +29,32 @@ def view_white_balance_image(FILE):
 
 def view_denoise_image(FILE):
     st.markdown("""### DENOISING (GAUSSIAN FILTER)""")
+    sigma = st.slider("Sigma Value", min_value=0.1, max_value=10.0, value=1.0, step=0.1)
+    kernel_size = st.slider("Kernel Size", min_value=3, max_value=7, value=5, step=2)
+    if kernel_size == 3:
+        placeholder_scaling_factor = 16
+    elif kernel_size == 5:
+        placeholder_scaling_factor = 273
+    else:
+        placeholder_scaling_factor = 1003
+    scaling_factor = st.number_input("Scaling Factor (Preferably dont edit)", value=placeholder_scaling_factor)
+
+    raw_image_data = load_raw_image(FILE)
+    demosaic_data = Bayer_demosaicing_bilinear(raw_image_data)
+    (denoised_data, gaussian_kernel) = apply_gaussian_filter_whole(demosaic_data, kernel_size=kernel_size, sigma=sigma, scaling_factor=scaling_factor, ret_kernel=True)
+
+    display_interactive_plot(b16_to_b8(denoised_data))
+
+    disp_gaussian_kernel_un = st.toggle("Display Gaussian Kernel - unnormalized")
+    disp_gaussian_kernel_n = st.toggle("Display Gaussian Kernel - normalized")
+
+    if disp_gaussian_kernel_un:
+        st.write("Gaussian Kernel - unnormalized")
+        st.write(gaussian_kernel)
+    if disp_gaussian_kernel_n:
+        st.write("Gaussian Kernel - normalized")
+        st.write(np.divide(gaussian_kernel, np.sum(gaussian_kernel)))
+
 
 def view_gamma_corrected_image(FILE):
     st.markdown("""### GAMMA CORRECTION""")
