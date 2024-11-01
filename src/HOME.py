@@ -2,6 +2,7 @@
 # REDUCE SESSION STATE JEEZ
 
 # WHAT PATAMETERS CAN BE CHANGED FOR WHITE BALANCE IN THE UI?
+# MAYBE TEMPERATURE?
 
 import streamlit as st
 from UTILS import display_interactive_plot, b16_to_b8, load_raw_image, load_raw_image_rgb
@@ -10,6 +11,7 @@ from WHITE_BALANCE import apply_white_balance
 from DENOISE import denoise
 from GAMMA_CORRECTION import gamma_correct_and_reduce_bit_depth
 from SHARPENING_FILTER import unsharp_mask
+from ASSIGNMENT_2 import assignment_2
 import numpy as np
     
 st.set_page_config(layout="wide")
@@ -42,7 +44,7 @@ if "previous_file" not in st.session_state:
 
 st.session_state.file = st.sidebar.selectbox(
     "Select file",
-    ("1920x1280x12bitsxGRBG_2850K_2000Lux.raw", "1920x1280x12bitsxGRBG_6500K_2000Lux.raw")
+    ("TestInput_Assignment_1/1920x1280x12bitsxGRBG_2850K_2000Lux.raw", "TestInput_Assignment_1/1920x1280x12bitsxGRBG_6500K_2000Lux.raw", "TestInput_Assignment_2/eSFR_1920x1280_12b_GRGB_6500K_60Lux.raw")
 )
 
 if "raw_image_data" not in st.session_state:
@@ -58,10 +60,10 @@ if "white_balance_data" not in st.session_state:
     st.session_state.white_balance_data = apply_white_balance(st.session_state.demosaic_data)
 
 if "denoised_data" not in st.session_state:
-    st.session_state.denoised_data = denoise(st.session_state.demosaic_data, kernel_size=st.session_state.kernel_size, sigma=st.session_state.sigma, scaling_factor=st.session_state.scaling_factor)
+    st.session_state.denoised_data = denoise(st.session_state.white_balance_data, kernel_size=st.session_state.kernel_size, sigma=st.session_state.sigma, scaling_factor=st.session_state.scaling_factor)
 
 if "gamma_corrected" not in st.session_state:
-    st.session_state.gamma_corrected = gamma_correct_and_reduce_bit_depth(st.session_state.demosaic_data, st.session_state.gamma)
+    st.session_state.gamma_corrected = gamma_correct_and_reduce_bit_depth(st.session_state.denoised_data, st.session_state.gamma)
 
 if "sharpened_image" not in st.session_state:
     st.session_state.sharpened_image = unsharp_mask(st.session_state.gamma_corrected, alpha=st.session_state.alpha)
@@ -73,14 +75,14 @@ if st.session_state.file != st.session_state.previous_file:
     st.session_state.raw_image_data_display = load_raw_image_rgb(st.session_state.file)
     st.session_state.demosaic_data = Bayer_demosaicing_bilinear(st.session_state.raw_image_data, st.session_state.r_gain, st.session_state.g_gain, st.session_state.b_gain)
     st.session_state.white_balance_data = apply_white_balance(st.session_state.demosaic_data)
-    st.session_state.denoised_data = denoise(st.session_state.demosaic_data, kernel_size=st.session_state.kernel_size, sigma=st.session_state.sigma, scaling_factor=st.session_state.scaling_factor)
-    st.session_state.gamma_corrected = gamma_correct_and_reduce_bit_depth(st.session_state.demosaic_data, st.session_state.gamma)
+    st.session_state.denoised_data = denoise(st.session_state.white_balance_data, kernel_size=st.session_state.kernel_size, sigma=st.session_state.sigma, scaling_factor=st.session_state.scaling_factor)
+    st.session_state.gamma_corrected = gamma_correct_and_reduce_bit_depth(st.session_state.denoised_data, st.session_state.gamma)
     st.session_state.sharpened_image = unsharp_mask(st.session_state.gamma_corrected, alpha=st.session_state.alpha)
 
     st.session_state.previous_file = st.session_state.file
 
 
-def current_parameters():
+def assignment_1_current_parameters():
     demosaic_params = {"red_gain": st.session_state.r_gain, "green_gain": st.session_state.g_gain, "blue_gain": st.session_state.b_gain}
     white_balance_params = {}
     denoise_params = {"Sigma": st.session_state.sigma, "Kernel Size": st.session_state.kernel_size, "Scaling Factor": st.session_state.scaling_factor}
@@ -167,46 +169,51 @@ def view_sharpening_filter_image():
     st.session_state.sharpened_image = unsharp_mask(st.session_state.gamma_corrected, alpha=st.session_state.alpha)
     display_interactive_plot(st.session_state.sharpened_image)
 
-def main():
-
-    add_selectbox = st.sidebar.selectbox(
-        "Select Stage of ISP",
-        ("RAW", "DEMOSAIC", "WHITE_BALANCE", "DENOISE", "GAMMA_CORRECTION", "SHARPENING_FILTER")
-    )
-
+def assignment_1():    
     radio_select = "RAW"
+
     with st.sidebar:
         st.title("EMMITRA ASSIGNMENTS")
         
         with st.expander("ASSIGNMENT-1", True):
             rad_select = st.radio("ISP", options=["RAW", "DEMOSAIC", "WHITE_BALANCE", "DENOISE", "GAMMA_CORRECTION", "SHARPENING_FILTER"])
             radio_select = rad_select
-
-            pass
-            # page.item("Ace editor", components.ace_editor)
-            # page.item("Disqus", components.disqus)
-            # page.item("Elements⭐", components.elements)
-            # page.item("Pandas profiling", components.pandas_profiling)
-            # page.item("Quill editor", components.quill_editor)
-            # page.item("React player", components.react_player)
+        # with st.expander("ASSIGNMENT-2", True):
+        #     rad_select = st.radio("DENOISE AND SHARPNESS", options=["MEDIAL, BILATERAL", "AI DENOISING", "SPATIAL SNR", "LAPLACIAN", "SHARPENING_FILTER"])
+        #     radio_select = rad_select
     
     st.markdown("""## ASSIGNMENT 1""")
     st.markdown("""<hr style="border:3px solid rgb(255,255,255) ">""", unsafe_allow_html=True)
 
-    if radio_select == "RAW":
-        view_raw_image()
-    elif radio_select == "DEMOSAIC":
-        view_demosaic_image()
-    elif radio_select == "WHITE_BALANCE":
-        view_white_balance_image()
-    elif radio_select == "DENOISE":
-        view_denoise_image()
-    elif radio_select == "GAMMA_CORRECTION":
-        view_gamma_corrected_image()
-    elif radio_select == "SHARPENING_FILTER":
-        view_sharpening_filter_image()
+    match radio_select:
+        case "RAW":
+            view_raw_image()
+        case "DEMOSAIC":
+            view_demosaic_image()
+        case "WHITE_BALANCE":
+            view_white_balance_image()
+        case "DENOISE":
+            view_denoise_image()
+        case "GAMMA_CORRECTION":
+            view_gamma_corrected_image()
+        case "SHARPENING_FILTER":
+            view_sharpening_filter_image()
 
-    current_parameters()
+    assignment_1_current_parameters()
+
+def main():
+    st.session_state.page = st.sidebar.selectbox(
+        "SELECT ASSIGNMENT",
+        ("ASSIGNMENT_1", "ASSIGNMENT_2")
+    )
+
+    match st.session_state.page:
+        case "ASSIGNMENT_1":
+            assignment_1()
+        case "ASSIGNMENT_2":
+            assignment_2()
+        case _:
+            pass
 
 if __name__ == "__main__":
     main()

@@ -32,8 +32,8 @@ def Bayer_demosaicing_bilinear(CFA, r_gain = 1, g_gain = 1, b_gain = 1):
                      [1, 2, 1]]) / 4
 
     # {‘reflect’, ‘constant’, ‘nearest’, ‘mirror’, ‘wrap’} modes
-    R = convolve(CFA * R_mask, H_RB, mode='reflect') * r_gain
-    G = convolve(CFA * G_mask, H_G, mode='reflect') * g_gain
-    B = convolve(CFA * B_mask, H_RB, mode='reflect') * b_gain
+    R = convolve(CFA * R_mask, H_RB, mode='mirror') * r_gain
+    G = convolve(CFA * G_mask, H_G, mode='mirror') * g_gain
+    B = convolve(CFA * B_mask, H_RB, mode='mirror') * b_gain
 
     return np.stack([R, G, B], axis=-1)

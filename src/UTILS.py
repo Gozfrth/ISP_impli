@@ -20,8 +20,8 @@ def display_interactive_plot(image_data):
     
     fig.update_layout(
         autosize=True,
-        width=None,  # Adjust width as needed
-        height=None,  # Adjust height as needed
+        width=1920,
+        height=1280,
         xaxis=dict(scaleanchor="y", scaleratio=1)
     )
     
@@ -77,7 +77,7 @@ def apply_gaussian_filter_per_channel(channel_data, kernel):
 
 def load_raw_image(FILE):
     try:
-        with open("TestInput_Assignment_1/" + FILE, 'rb') as f:
+        with open(FILE, 'rb') as f:
             raw_data = f.read()
 
         width, height = 1920, 1280 
