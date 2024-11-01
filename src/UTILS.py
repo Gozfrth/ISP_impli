@@ -1,4 +1,6 @@
 import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 import streamlit as st
 import numpy as np
 import math
@@ -15,17 +17,40 @@ from scipy.ndimage import convolve
 #  [1, 2, 1],]), 16)
 
 
-def display_interactive_plot(image_data):
+def display_interactive_plot(image_data, width=1920, height=1280):
     fig = px.imshow(image_data)
     
     fig.update_layout(
         autosize=True,
-        width=1920,
-        height=1280,
+        width=width,
+        height=height,
         xaxis=dict(scaleanchor="y", scaleratio=1)
     )
     
     st.plotly_chart(fig, use_container_width=True)
+
+def display_subplots_2(image_data_1, image_data_2):
+    fig = make_subplots(rows=1, cols=2, subplot_titles=("MEDIAN", "BILATERAL"))
+
+    fig.add_trace(
+        go.Image(z=image_data_1),
+        row=1, col=1
+    )
+
+    fig.add_trace(
+        go.Image(z=image_data_2),
+        row=1, col=2
+    )
+
+    fig.update_layout(
+        autosize=True,
+        width=1920,
+        height=600,
+        showlegend=False
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
 
 def b16_to_b8(image_data):
 
