@@ -147,7 +147,6 @@ def view_gamma_corrected_image():
     st.markdown("""### GAMMA CORRECTION""")
     st.session_state.gamma = st.slider("Gamma Value", min_value=0.1, max_value=10.0, value=2.2, step=0.1)
     2.2
-
     st.session_state.gamma_corrected = gamma_correct_and_reduce_bit_depth(st.session_state.denoised_data, st.session_state.gamma)
     # print(gamma_corrected)
     display_interactive_plot(st.session_state.gamma_corrected)

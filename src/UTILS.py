@@ -53,6 +53,29 @@ def display_subplots_2(image_data_1, image_data_2, subplot_titles):
 
     st.plotly_chart(fig, use_container_width=True)
 
+def display_crf(crf_debevec):
+    # Assume crf_debevec is a 1D array with the CRF values
+    # We need to create an array for input intensity values (usually 0 to 255)
+    intensity_values = np.arange(0, 256, 1)  # Input intensity values from 0 to 255
+    output_values = crf_debevec.flatten()  # Flatten in case it's a 2D array
+
+    # Create a Plotly graph
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=intensity_values, y=output_values, mode='lines', name='CRF'))
+    
+    # Update layout
+    fig.update_layout(
+        title='Camera Response Function (CRF)',
+        xaxis_title='Input Intensity',
+        yaxis_title='Output Intensity',
+        showlegend=True,
+        width=700,
+        height=500
+    )
+    
+    # Display the figure in Streamlit
+    st.plotly_chart(fig)
+
 def display_color_checker():
     color_checker_srgb = [
         ['#735244', '#c29682', '#627a9d', '#576c43', '#8580b1', '#67bdaa'],
@@ -63,29 +86,32 @@ def display_color_checker():
 
     fig = go.Figure()
 
+    # Adjust layout to have enough space for the entire grid
     fig.update_layout(
         height=400,
         width=600,
         margin=dict(l=10, r=10, t=10, b=10),
-        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)
+        xaxis=dict(range=[0, 6], showgrid=False, zeroline=False, showticklabels=False),
+        yaxis=dict(range=[-4, 0], showgrid=False, zeroline=False, showticklabels=False)
     )
 
+    # Add rectangles for each color block
     for row_index, row in enumerate(color_checker_srgb):
         for col_index, color in enumerate(row):
-            fig.add_trace(go.Scatter(
-                x=[col_index, col_index + 1],
-                y=[-row_index, -row_index - 1],
-                fill='toself',
+            fig.add_shape(
+                type="rect",
+                x0=col_index, x1=col_index + 1,
+                y0=-row_index, y1=-row_index - 1,
                 fillcolor=color,
-                mode='lines',
-                line=dict(color=color)
-            ))
+                line=dict(color=color)  # Use same color for the border
+            )
 
+    # Hide axes and set the background color
     fig.update_xaxes(visible=False)
     fig.update_yaxes(visible=False)
     fig.update_layout(showlegend=False, plot_bgcolor='black')
 
+    # Display in Streamlit
     st.title("Color Checker Visualization")
     st.plotly_chart(fig)
 

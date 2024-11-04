@@ -4,7 +4,7 @@ import numpy as np
 
 # HDR
 
-from UTILS import display_interactive_plot, display_subplots_2
+from UTILS import display_interactive_plot, display_subplots_2, display_crf
 
 def assignment_3_current_parameters():
     pass
@@ -16,6 +16,8 @@ def hdr(img_list, exposure_times):
 
     tonemap1 = cv2.createTonemap(gamma=2.2)
     res_debevec = tonemap1.process(hdr_debevec.copy())
+    cal_debevec = cv2.createCalibrateDebevec()
+    crf_debevec = cal_debevec.process(img_list, times=exposure_times)
     
     ## ROBERTSON
     merge_robertson = cv2.createMergeRobertson()
@@ -36,7 +38,8 @@ def hdr(img_list, exposure_times):
     display_interactive_plot(res_debevec_8bit, title="DEBEVEC")
     display_interactive_plot(res_robertson_8bit, title="ROBERTSON")
     display_interactive_plot(res_mertens_8bit, title="METRENS")
-    print(hdr_debevec.dtype)
+
+    display_crf(crf_debevec)
 
 def assignment_3():
     st.markdown("""## ASSIGNMENT 3""")
@@ -70,7 +73,7 @@ def assignment_3():
     if(len(img_fn) == 3):
         st.session_state.three_place_holder = img_fn[2].name
 
-    print([file.name for file in img_fn])
+    # print([file.name for file in img_fn])
 
     exp_times = [0.0, 0.0, 0.0]
 
