@@ -1,12 +1,11 @@
 import streamlit as st
 import numpy as np
-from UTILS import display_interactive_plot, b16_to_b8, load_raw_image, load_raw_image_rgb
+from UTILS import display_interactive_plot, b16_to_b8, load_raw_image, load_raw_image_rgb, display_color_checker
 from DEMOSAIC import Bayer_demosaicing_bilinear
 from WHITE_BALANCE import apply_white_balance
 from DENOISE import denoise
 from GAMMA_CORRECTION import gamma_correct_and_reduce_bit_depth
 from SHARPENING_FILTER import unsharp_mask
-from ASSIGNMENT_2 import assignment_2
 
 def init_state():
     # DEMOSAIC PARAMS
@@ -146,12 +145,13 @@ def view_denoise_image():
 
 def view_gamma_corrected_image():
     st.markdown("""### GAMMA CORRECTION""")
-    st.session_state.gamma = st.slider("Gamma Value", min_value=0.1, max_value=10.0, value=1.6, step=0.1)
-    1.6
+    st.session_state.gamma = st.slider("Gamma Value", min_value=0.1, max_value=10.0, value=2.2, step=0.1)
+    2.2
 
     st.session_state.gamma_corrected = gamma_correct_and_reduce_bit_depth(st.session_state.denoised_data, st.session_state.gamma)
     # print(gamma_corrected)
     display_interactive_plot(st.session_state.gamma_corrected)
+    display_color_checker()
 
 
 def view_sharpening_filter_image():    

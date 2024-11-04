@@ -17,20 +17,22 @@ from scipy.ndimage import convolve
 #  [1, 2, 1],]), 16)
 
 
-def display_interactive_plot(image_data, width=1920, height=1280):
+def display_interactive_plot(image_data, width=1920, height=1280, title=""):
     fig = px.imshow(image_data)
     
     fig.update_layout(
         autosize=True,
         width=width,
         height=height,
-        xaxis=dict(scaleanchor="y", scaleratio=1)
+        xaxis=dict(scaleanchor="y", scaleratio=1),
+        title=title,
+        title_x=0.5,
     )
     
     st.plotly_chart(fig, use_container_width=True)
 
-def display_subplots_2(image_data_1, image_data_2):
-    fig = make_subplots(rows=1, cols=2, subplot_titles=("MEDIAN", "BILATERAL"))
+def display_subplots_2(image_data_1, image_data_2, subplot_titles):
+    fig = make_subplots(rows=1, cols=2, subplot_titles=subplot_titles)
 
     fig.add_trace(
         go.Image(z=image_data_1),
@@ -50,6 +52,42 @@ def display_subplots_2(image_data_1, image_data_2):
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+def display_color_checker():
+    color_checker_srgb = [
+        ['#735244', '#c29682', '#627a9d', '#576c43', '#8580b1', '#67bdaa'],
+        ['#d68d8f', '#d4b86e', '#505ba6', '#c15a63', '#5e3c6c', '#9dbc40'],
+        ['#e0a32e', '#383d96', '#469449', '#af363c', '#e5c78d', '#9a9a9d'],
+        ['#e1d8eb', '#363636', '#808080', '#c8c8c8', '#ffffff', '#000000']
+    ]
+
+    fig = go.Figure()
+
+    fig.update_layout(
+        height=400,
+        width=600,
+        margin=dict(l=10, r=10, t=10, b=10),
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)
+    )
+
+    for row_index, row in enumerate(color_checker_srgb):
+        for col_index, color in enumerate(row):
+            fig.add_trace(go.Scatter(
+                x=[col_index, col_index + 1],
+                y=[-row_index, -row_index - 1],
+                fill='toself',
+                fillcolor=color,
+                mode='lines',
+                line=dict(color=color)
+            ))
+
+    fig.update_xaxes(visible=False)
+    fig.update_yaxes(visible=False)
+    fig.update_layout(showlegend=False, plot_bgcolor='black')
+
+    st.title("Color Checker Visualization")
+    st.plotly_chart(fig)
 
 
 def b16_to_b8(image_data):

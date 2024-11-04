@@ -1,7 +1,7 @@
 import numpy as np
 import math 
 
-def gamma_correct_and_reduce_bit_depth(image_12bit, gamma=1):
+def gamma_correct_and_reduce_bit_depth(image_12bit, gamma=2.2):
 
     image_normalized = (image_12bit) / 4095.0
 

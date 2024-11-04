@@ -27,7 +27,7 @@ def view_median_bilateral():
     ## st.session_state.two_bilateral_data --- IS 8 BIT!!!
     ## CV2 BILATERAL DOESNT SUPPORT 16 BIT IMAGES, SO CONVERTING TO 8 BIT. big sad
 
-    display_subplots_2(b16_to_b8(st.session_state.two_median_data), st.session_state.two_bilateral_data)
+    display_subplots_2(b16_to_b8(st.session_state.two_median_data), st.session_state.two_bilateral_data, subplot_titles=["Median", "Bilateral"])
     
     match st.session_state.two_kernel_size:
         case 3:
