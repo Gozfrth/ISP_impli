@@ -202,8 +202,6 @@ def load_raw_image_rgb(FILE):
 
         rgb_img_display = (rgb_img / 4095 * 255).astype(np.uint8)
 
-        print("Raw data loaded successfully")
-
         return rgb_img_display
 
     except Exception as e:

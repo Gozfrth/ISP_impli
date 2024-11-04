@@ -15,6 +15,8 @@ def init_state():
         st.session_state.b_gain = 1.0
 
     # WHITE_BALANCE PARAMS (empty rn)
+    if "temperature" not in st.session_state:
+        st.session_state.temperature = 6500
 
     # DENOISE PARAMS
     if "sigma" not in st.session_state:
@@ -75,7 +77,7 @@ def init_state():
 
 def assignment_1_current_parameters():
     demosaic_params = {"red_gain": st.session_state.r_gain, "green_gain": st.session_state.g_gain, "blue_gain": st.session_state.b_gain}
-    white_balance_params = {}
+    white_balance_params = {"temperature": st.session_state.temperature}
     denoise_params = {"Sigma": st.session_state.sigma, "Kernel Size": st.session_state.kernel_size, "Scaling Factor": st.session_state.scaling_factor}
     gamma_params = {"Gamma": st.session_state.gamma}
     sharpening_params = {"Alpha": st.session_state.alpha}
@@ -108,7 +110,11 @@ def view_demosaic_image():
 
 def view_white_balance_image():
     st.markdown("""### WHITE BALANCE""")
-    st.session_state.white_balance_data = apply_white_balance(st.session_state.demosaic_data)
+    
+    st.session_state.temperature = st.slider("Color Temperature (K)", min_value=2300, max_value=10000, value=6150, step=50)
+
+    st.session_state.white_balance_data = apply_white_balance(st.session_state.demosaic_data, temperature=st.session_state.temperature)
+
     display_interactive_plot(b16_to_b8(st.session_state.white_balance_data))
 
 def view_denoise_image():

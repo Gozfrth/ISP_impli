@@ -1,22 +1,24 @@
 import numpy as np
 
-def apply_white_balance(demosiac_data):
-    
-    if demosiac_data.ndim != 3 or demosiac_data.shape[2] != 3:
+def apply_white_balance(demosaic_data, temperature=6150):
+    if demosaic_data.ndim != 3 or demosaic_data.shape[2] != 3:
         raise ValueError("Input must be a 3D array with three color channels.")
 
-    R = demosiac_data[:, :, 0].astype(np.float32)
-    G = demosiac_data[:, :, 1].astype(np.float32)
-    B = demosiac_data[:, :, 2].astype(np.float32)
-   
+    R = demosaic_data[:, :, 0]
+    G = demosaic_data[:, :, 1]
+    B = demosaic_data[:, :, 2]
+
     r_mean = np.mean(R)
     g_mean = np.mean(G)
     b_mean = np.mean(B)
-    
+
     r_gain = g_mean / r_mean if r_mean != 0 else 1
     b_gain = g_mean / b_mean if b_mean != 0 else 1
 
-    # Apply gains
+    temperature_factor = 1+((temperature-6150) / 7700)
+    r_gain *= temperature_factor
+    b_gain /= temperature_factor
+
     R = (R * r_gain).clip(0, 4095)
     B = (B * b_gain).clip(0, 4095)
 

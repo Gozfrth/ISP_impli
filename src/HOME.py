@@ -11,7 +11,6 @@ from ASSIGNMENT_2 import assignment_2
 from ASSIGNMENT_1 import assignment_1
 
 def main():
-    print("------------------------------------------------------------------------------------------------------------")
     st.set_page_config(layout="wide")
     st.session_state.page = st.sidebar.selectbox(
         "SELECT ASSIGNMENT",

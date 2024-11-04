@@ -12,6 +12,7 @@ from GAMMA_CORRECTION import gamma_correct_and_reduce_bit_depth
 from SHARPENING_FILTER import unsharp_mask
 
 from MEDIAN_BILATERAL import median_bilateral
+from LAPLACIAN_FILTER import apply_laplacian_filter
 
 def assignment_2_current_parameters():
     pass
@@ -47,9 +48,28 @@ def view_snr():
 
 def view_laplacian_filter():
     st.markdown("""### LAPLACIAN FILTER""")
+    st.session_state.two_laplace_kernel_size = st.slider("Laplacian Filter", min_value=3, max_value=7, value=5, step=2)
+    st.session_state.two_enhancement_factor = st.slider("Enhancement Factor", min_value=0.1, max_value=2.0, value=1.0, step=0.05)
+    st.session_state.denoise_data1, st.session_state.denoise_data2 = median_bilateral(st.session_state.two_white_balance_data, kernel_size=st.session_state.two_kernel_size)
+    st.session_state.filtered_data=apply_laplacian_filter(st.session_state.denoise_data2,kernel_size=st.session_state.two_laplace_kernel_size, enhancement_factor=st.session_state.two_enhancement_factor)
+    display_interactive_plot(st.session_state.filtered_data)
 
 def view_edge_strength():
     st.markdown("""### EDGE STRENGTH""")
+
+    st.session_state.threshold1 = st.slider("threshold1", min_value=50, max_value=150, value=100, step=5)
+    st.session_state.threshold2 = st.slider("threshold2", min_value=150, max_value=300, value=200, step=5)
+
+    st.session_state.denoised_data = denoise(st.session_state.two_white_balance_data, kernel_size=st.session_state.two_kernel_size, sigma=st.session_state.two_sigma, scaling_factor=st.session_state.two_scaling_factor)
+
+    denoised_image_8bit = b16_to_b8(st.session_state.denoised_data)
+    
+    st.session_state.edge_data = cv2.Canny(denoised_image_8bit, threshold1=st.session_state.threshold1, threshold2=st.session_state.threshold2)
+    
+    edge_strength = np.sum(st.session_state.edge_data > 0) / (st.session_state.edge_data.size) * 100
+    st.markdown(f"Edge Strength: {edge_strength:.2f}%")
+    
+    display_interactive_plot(st.session_state.edge_data)
 
 def init_state():
     # DEMOSAIC PARAMS
@@ -71,6 +91,15 @@ def init_state():
 
     if "two_alpha" not in st.session_state:
         st.session_state.two_alpha = 1.5
+    
+    # Laplacian Filter
+    if "two_laplace_kernel_size" not in st.session_state:
+        st.session_state.two_enhancement_factor = 1.0
+        st.session_state.two_laplace_kernel_size = 5
+    
+    if "threshold1" not in st.session_state:
+        st.session_state.threshold1 = 100
+        st.session_state.threshold2 = 200
 
     FILE = "TestInput_Assignment_2/eSFR_1920x1280_12b_GRGB_6500K_60Lux.raw"
 
