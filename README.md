@@ -68,7 +68,7 @@ It is wrapped in a streamlit UI for customizing the tunable parameters that all 
 
 ##### Signal-to-Noise Ratio (SNR):
 - The function computes SNR values for selected regions in a denoised image by calculating the mean signal and noise within each ROI. It displays the marked ROIs on the image and outputs the SNR values for each region.
-![SNR](https://github.com/Gozfrth/ISP_Impli/blob/main/images/SNR.png?raw=true "SNR")
+![SNR](https://github.com/Gozfrth/ISP_Impli/blob/main/images/snr.png?raw=true "SNR")
 
 ##### Laplacian Filtering:
 - This function uses a Laplacian filter on a grayscale version of the image to detect edges and converts the result to an 8-bit format. The filtered edges are then combined with the original RGB image by adding a weighted blend of the edge information to each color channel. An enhancement factor controls the intensity of the effect, preserving the original colors while highlighting edges.
