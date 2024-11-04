@@ -32,11 +32,11 @@ It is wrapped in a streamlit UI for customizing the tunable parameters that all 
 ![demosaic image](https://github.com/Gozfrth/ISP_Impli/blob/main/images/demosaic.png?raw=true "Demosaic")
 - Converts a Bayer CFA to an RGB image using bilinear interpolation. Uses scipy's convolve function to convolve color matrices over CFA and merge the resulting values into rgb format(16b - 12b effective).
 
-- Tunable Parameters: `r_gain`, `g_gain`, `b_gain`
+###### Tunable Parameters: `r_gain`, `g_gain`, `b_gain`
 
 ##### White Balance:
 - Adjusts the color balance of an image based on a simple Grey-world Algorithm.Further editing on a user-specified temperature. Scales red and blue gains based on green mean
-- Tunable Parameters: `demosaic_data`, `temperature`
+###### Tunable Parameters: `demosaic_data`, `temperature`
 
 ![white balance image](https://github.com/Gozfrth/ISP_Impli/blob/main/images/white_balance.png?raw=true "White balance")
 
@@ -50,24 +50,25 @@ It is wrapped in a streamlit UI for customizing the tunable parameters that all 
 
 ##### Gamma Correction:
 - Applies gamma correction `2.2` and reduces the bit depth of the image `(12b - 8b)`.
-Tunable Parameters: `gamma`
+###### Tunable Parameters: `gamma`
 
 ##### Sharpening:
-Sharpens the image using the unsharp mask technique.
-Tunable Parameters: `alpha`
+- Sharpens the image using the unsharp mask technique.
+###### Tunable Parameters: `alpha`
 
 ### Assignment 2: Advanced Denoising and Filtering
 
 ##### Median and Bilateral Filtering:
 ![median and bilateral](https://github.com/Gozfrth/ISP_Impli/blob/main/images/median_bilateral.png?raw=true "Median and Bilateral Filter (compared with Gaussian)")
 - Applies median and bilateral filters to the image. Uses opencv's median and bilateral functions.
-- Tunable Parameters: `kernel_size`
+###### Tunable Parameters: `kernel_size`
 
 ##### AI Denoising:
 - Placeholder
 
 ##### Signal-to-Noise Ratio (SNR):
-- Placeholder
+- The function computes SNR values for selected regions in a denoised image by calculating the mean signal and noise within each ROI. It displays the marked ROIs on the image and outputs the SNR values for each region.
+![SNR](https://github.com/Gozfrth/ISP_Impli/blob/main/images/SNR.png?raw=true "SNR")
 
 ##### Laplacian Filtering:
 - This function uses a Laplacian filter on a grayscale version of the image to detect edges and converts the result to an 8-bit format. The filtered edges are then combined with the original RGB image by adding a weighted blend of the edge information to each color channel. An enhancement factor controls the intensity of the effect, preserving the original colors while highlighting edges.

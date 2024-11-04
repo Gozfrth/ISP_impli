@@ -13,6 +13,7 @@ from SHARPENING_FILTER import unsharp_mask
 
 from MEDIAN_BILATERAL import median_bilateral
 from LAPLACIAN_FILTER import apply_laplacian_filter
+from SNR import calculate_snr
 
 def assignment_2_current_parameters():
     pass
@@ -44,7 +45,26 @@ def view_ai_denoise():
     st.markdown("""### AI_DENOISE""")
 
 def view_snr():
-    st.markdown("""### SNR""")
+    ROIS = [
+    (791, 365, 1042, 459), 
+    (677, 557, 763, 646),  
+    (794, 746, 1036, 835)
+]
+    st.markdown("### Signal-to-Noise Ratio (SNR)")
+    denoised_image = st.session_state.two_median_data
+    denoised_image_8bit = b16_to_b8(denoised_image)
+
+    
+    for i, roi in enumerate(ROIS, start=1):
+        x1, y1, x2, y2 = roi
+        cv2.rectangle(denoised_image_8bit, (x1, y1), (x2, y2), (255, 0, 0), 2)
+    
+    display_interactive_plot(denoised_image_8bit, width=800, height=600)
+
+    st.markdown("#### SNR Values for ROIs")
+    for i, roi in enumerate(ROIS, start=1):
+        snr_value = calculate_snr(denoised_image, roi)
+        st.write(f"ROI {i} SNR: {snr_value:.2f}")
 
 def view_laplacian_filter():
     st.markdown("""### LAPLACIAN FILTER""")
