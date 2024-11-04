@@ -23,13 +23,13 @@ This report provides an overview of the image processing assignments implemented
 
 It is wrapped in a streamlit UI for customizing the tunable parameters that all individual processes have, for example:
 
-![example](images\tunable_parameters.png "Example")
+![example](https://github.com/Gozfrth/ISP_Impli/blob/main/images/tunable_parameters.png?raw=true "Example")
 
 ### Assignment 1: Basic Image Signal Processing (ISP) Impementation
 ##### Modules and Functions
 
 ##### Demosaicing:
-![demosaic image](images\demosaic.png "Demosaic")
+![demosaic image](https://github.com/Gozfrth/ISP_Impli/blob/main/images/demosaic.png?raw=true "Demosaic")
 - Converts a Bayer CFA to an RGB image using bilinear interpolation. Uses scipy's convolve function to convolve color matrices over CFA and merge the resulting values into rgb format(16b - 12b effective).
 
 - Tunable Parameters: `r_gain`, `g_gain`, `b_gain`
@@ -38,7 +38,7 @@ It is wrapped in a streamlit UI for customizing the tunable parameters that all 
 - Adjusts the color balance of an image based on a simple Grey-world Algorithm.Further editing on a user-specified temperature. Scales red and blue gains based on green mean
 - Tunable Parameters: `demosaic_data`, `temperature`
 
-![white balance image](images\white_balance.png "White balance")
+![white balance image](https://github.com/Gozfrth/ISP_Impli/blob/main/images/white_balance.png?raw=true "White balance")
 
 ###### Further images in the `/images` directory
 
@@ -59,7 +59,7 @@ Tunable Parameters: `alpha`
 ### Assignment 2: Advanced Denoising and Filtering
 
 ##### Median and Bilateral Filtering:
-![median and bilateral](images\median_bilateral.png "Median and Bilateral Filter (compared with Gaussian)")
+![median and bilateral](https://github.com/Gozfrth/ISP_Impli/blob/main/images/median_bilateral.png?raw=true "Median and Bilateral Filter (compared with Gaussian)")
 - Applies median and bilateral filters to the image. Uses opencv's median and bilateral functions.
 - Tunable Parameters: `kernel_size`
 
@@ -72,21 +72,22 @@ Tunable Parameters: `alpha`
 ##### Laplacian Filtering:
 - This function uses a Laplacian filter on a grayscale version of the image to detect edges and converts the result to an 8-bit format. The filtered edges are then combined with the original RGB image by adding a weighted blend of the edge information to each color channel. An enhancement factor controls the intensity of the effect, preserving the original colors while highlighting edges.
 - Tunable Parameters: `kernel_size`, `enhancement_factor`
-![Laplacian Filter](images\laplacian_filter_kernel_size_5.png "kernel size 5")
+![Laplacian Filter](https://github.com/Gozfrth/ISP_Impli/blob/main/images/laplacian_filter_kernel_size_5.png?raw=true "kernel size 5")
 
 ##### Edge Strength:
 - The function applies a Canny edge detector to a denoised image with user-controlled thresholds, converting it to an 8-bit format before edge detection. It then calculates the edge strength as a percentage of detected edge pixels and displays the edge image.
 
+
 - Tunable Parameters: `threshold1`, `threshold2` 
-![Edge Strength](images\edge_strengthened.png "Edge Strength")
+![Edge Strength](https://github.com/Gozfrth/ISP_Impli/blob/main/images/edge_strengthened.png?raw=true "Edge Strength")
 
 ### Assignment 3: High Dynamic Range (HDR) Imaging
 ##### HDR Imaging:
 - Combines multiple images taken with different exposure times to create an HDR image using Debevec, Robertson, and Mertens methods.
 - Outputs the hdr images generated, along with crf :
-![crf](images\crf.png "Crf")
+![crf](https://github.com/Gozfrth/ISP_Impli/blob/main/images/crf.png?raw=true "Crf")
 - Inputs: 3 images taken of the same scenario, at different exposure times. The exposure times of each image must be known and input as such:
-![hdr input](images\hdr_options.png "HDR Input") 
+![hdr input](https://github.com/Gozfrth/ISP_Impli/blob/main/images/hdr_options.png?raw=true "HDR Input") 
 
 ##### Utilities
 The `UTILS.py` file contains various custom utility functions for image processing, including:
